@@ -5,7 +5,8 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 
 const mongoose = require('mongoose')
-mongoose.connect(process.env.MLAB_URI || 'mongodb://localhost/exercise-track' )
+const Schema = mongoose.Schema;
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost/exercise-track' )
 
 app.use(cors())
 
@@ -46,3 +47,12 @@ app.use((err, req, res, next) => {
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port)
 })
+
+//code here for creating a new user including schema, model and route
+//to be broken out into its module after code is working.
+
+//user schema
+let userSchema = new Schema({
+  username: String
+})
+
