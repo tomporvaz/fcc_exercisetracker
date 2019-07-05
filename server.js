@@ -56,3 +56,8 @@ let userSchema = new Schema({
   username: String
 })
 
+//user model
+let User = new mongoose.model("User", userSchema);
+
+
+
