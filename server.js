@@ -59,5 +59,9 @@ let userSchema = new Schema({
 //user model
 let User = new mongoose.model("User", userSchema);
 
-
+//route to post new user
+app.post("/api/exercise/new-user", function (req, res) {
+  console.log("Post req.body.username" + req.body.username);
+  res.json({"username": res.body.username});
+});
 
