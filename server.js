@@ -38,7 +38,12 @@ app.post("/api/exercise/new-user", function (req, res) {
   console.log("Post req.body.username " + req.body.username);
   
   newUser.save(function(err, user){
-    return res.json({"username": user.username, "_id": user._id});
+    if(err){
+      console.error(err);
+      return res.json({"Error": "Username error", "errMessage": err});
+    }else {
+      return res.json({"username": user.username, "_id": user._id});
+    }
   })
 });
 
