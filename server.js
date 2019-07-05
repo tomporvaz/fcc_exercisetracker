@@ -33,8 +33,13 @@ let User = mongoose.model("User", userSchema);
 
 //route to post new user
 app.post("/api/exercise/new-user", function (req, res) {
-  console.log("Post req.body.username" + req.body.username);
-  res.json({"username": req.body.username});
+  let newUser = new User({"username": req.body.username});
+  
+  console.log("Post req.body.username " + req.body.username);
+  
+  newUser.save(function(err, user){
+    return res.json({"username": user.username, "_id": user._id});
+  })
 });
 
 
