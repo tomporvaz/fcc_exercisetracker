@@ -37,6 +37,12 @@ app.post("/api/exercise/new-user", function (req, res) {
   
   console.log("Post req.body.username " + req.body.username);
   
+  /*
+  //newUser.save saves the newUser to mongoDB, and returns and error or a JSON of the saved
+  user with the _id
+  TO DO: shorted _id so it can be used as a userID
+    check if username already exists and return error if so. Use unique and index on schema type? return error from unique?
+  */
   newUser.save(function(err, user){
     if(err){
       console.error(err);
