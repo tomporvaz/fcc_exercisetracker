@@ -20,6 +20,24 @@ app.get('/', (req, res) => {
 });
 
 
+//code here for creating a new user including schema, model and route
+//to be broken out into its module after code is working.
+
+//user schema
+let userSchema = new Schema({
+  username: String
+})
+
+//user model
+let User = mongoose.model("User", userSchema);
+
+//route to post new user
+app.post("/api/exercise/new-user", function (req, res) {
+  console.log("Post req.body.username" + req.body.username);
+  res.json({"username": req.body.username});
+});
+
+
 // Not found middleware
 app.use((req, res, next) => {
   return next({status: 404, message: 'not found'})
@@ -48,20 +66,5 @@ const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port)
 })
 
-//code here for creating a new user including schema, model and route
-//to be broken out into its module after code is working.
 
-//user schema
-let userSchema = new Schema({
-  username: String
-})
-
-//user model
-let User = mongoose.model("User", userSchema);
-
-//route to post new user
-app.post("/api/exercise/new-user", function (req, res) {
-  console.log("Post req.body.username" + req.body.username);
-  res.json({"username": res.body.username});
-});
 
