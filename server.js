@@ -25,6 +25,7 @@ app.get('/', (req, res) => {
 
 //user schema
 let userSchema = new Schema({
+  _id: {type: String, required: true, maxlength: 9},
   username: String
 })
 
