@@ -92,8 +92,8 @@ app.post("/api/exercise/add", function (req, res){
     username: "not yet defined",
     description: newWorkout.description,
     duration: newWorkout.duration,
-    userID: workoutDate.userID,
-    date: workout.date
+    userID: newWorkout.userID,
+    date: newWorkout.date
   });
   
   /*
