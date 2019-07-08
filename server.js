@@ -37,8 +37,9 @@ let User = mongoose.model("User", userSchema);
 
 //route to post new user
 app.post("/api/exercise/new-user", function (req, res) {
-  let newUser = new User({"_id": uniqueUserID, "username": req.body.username});
   let uniqueUserID = cryptoRandomString({length: 4 }) + "-" + cryptoRandomString({length: 4});
+  let newUser = new User({"_id": uniqueUserID, "username": req.body.username});
+  
   console.log("Post req.body.username " + req.body.username);
   
   /*
