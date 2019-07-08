@@ -76,10 +76,10 @@ let Workout = mongoose.model("Workout", workoutSchema);
 //route
 app.post("/api/exercise/add", function (req, res){
   console.log(".../add req.body" + JSON.stringify(req.body));
-
+  
   //define date here with req.body.date or todays date if empty
   const workoutDate = req.body.date ? new Date (req.body.date) : new Date();
-
+  
   //create new Workout with req data, and save Workout to MongoDB
   let newWorkout = new Workout ({
     userID: req.body.userID,
@@ -87,27 +87,26 @@ app.post("/api/exercise/add", function (req, res){
     duration: req.body.duration,
     date: workoutDate
   }); 
-
-  res.json({
-    username: "not yet defined",
-    description: newWorkout.description,
-    duration: newWorkout.duration,
-    userID: newWorkout.userID,
-    date: newWorkout.date
+  
+  
+  
+  newWorkout.save(function(err, savedWorkout){
+    if(err){
+      //handle error
+      console.error(err);
+      res.json({Error: "Error adding new excercise."});
+    } else {
+      //return User object with excercise fields 
+      res.json({
+        username: "not yet defined",
+        description: savedWorkout.description,
+        duration: savedWorkout.duration,
+        userID: savedWorkout.userID,
+        date: savedWorkout.date
+      });
+    }
   });
   
-  /*
-  if(err){
-    //handle error
-    console.error(err);
-    res.json({Error: "Error adding new excercise."});
-  } else {
-
-    //if no date supplied, use current date
-
-    //return User object with excercise fields
-  }
-  */
 })
 
 
@@ -119,7 +118,7 @@ app.use((req, res, next) => {
 // Error Handling middleware
 app.use((err, req, res, next) => {
   let errCode, errMessage
-
+  
   if (err.errors) {
     // mongoose validation error
     errCode = 400 // bad request
@@ -132,7 +131,7 @@ app.use((err, req, res, next) => {
     errMessage = err.message || 'Internal Server Error'
   }
   res.status(errCode).type('txt')
-    .send(errMessage)
+  .send(errMessage)
 })
 
 const listener = app.listen(process.env.PORT || 3000, () => {
