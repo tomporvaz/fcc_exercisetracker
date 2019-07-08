@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const cryptoRandomString = require("crypto-random-string")
+const uniqueValidator = require('mongoose-unique-validator')
 
 const cors = require('cors')
 
@@ -26,9 +27,10 @@ app.get('/', (req, res) => {
 
 //user schema
 let userSchema = new Schema({
-  _id: {type: String, required: true, maxlength: 9},
-  username: String
+  _id: {type: String, required: true, maxlength: 9, unique: true},
+  username: {type: String, required: true, unique: true}
 })
+userSchema.plugin(uniqueValidator);
 
 //user model
 let User = mongoose.model("User", userSchema);
