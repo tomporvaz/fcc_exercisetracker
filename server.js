@@ -43,10 +43,8 @@ app.post("/api/exercise/new-user", function (req, res) {
   console.log("Post req.body.username " + req.body.username);
   
   /*
-  //newUser.save saves the newUser to mongoDB, and returns and error or a JSON of the saved
+  newUser.save saves the newUser to mongoDB, and returns and error or a JSON of the saved
   user with the _id
-  TO DO: shorted _id so it can be used as a userID
-    check if username already exists and return error if so. Use unique and index on schema type? return error from unique?
   */
   newUser.save(function(err, user){
     if(err){
@@ -61,6 +59,35 @@ app.post("/api/exercise/new-user", function (req, res) {
     }
   })
 });
+
+
+/*
+This route here wiil save excercise workout info
+*/
+const workoutSchema = new Schema({
+  userID: {type: mongoose.ObjectId, ref: User},
+  description: {type: String, required: true},
+  duration: {type: Number, required: true},
+  date: {type: String}
+})
+
+let Workout = mongoose.model("Workout", workoutSchema);
+
+//route
+app.post("/api/exercise/add", function (req, res){
+  console.log(".../add req.body" + JSON.stringify(req.body));
+  if(err){
+    //handle error
+    console.error(err);
+    res.json({Error: "Error adding new excercise."});
+  } else {
+    //create new Workout with req data, and save Workout to MongoDB
+    let newWorkout = new Workout ({userID: req.body.userID}) 
+    //if no date supplied, use current date
+
+    //return User object with excercise fields
+  }
+})
 
 
 // Not found middleware
