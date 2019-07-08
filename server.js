@@ -51,11 +51,8 @@ app.post("/api/exercise/new-user", function (req, res) {
   newUser.save(function(err, user){
     if(err){
       console.error(err);
-      if(err.code === 110000){
-        return res.json({
-          "Error": "Diplicate Username", 
-          "errMessage": "This username is already taken.  Please chooose another name."
-      });
+      if(err.name === "ValidationError"){
+        return res.send(err.message);
       }else {
         return res.json({"Error": "Username error", "errMessage": err});
       }
