@@ -77,8 +77,24 @@ let Workout = mongoose.model("Workout", workoutSchema);
 app.post("/api/exercise/add", function (req, res){
   console.log(".../add req.body" + JSON.stringify(req.body));
 
+  //define date here with req.body.date or todays date if empty
+  const workoutDate = req.body.date ? new Date (req.body.date) : new Date();
+
   //create new Workout with req data, and save Workout to MongoDB
-  let newWorkout = new Workout ({userID: req.body.userID}) 
+  let newWorkout = new Workout ({
+    userID: req.body.userID,
+    description: req.body.description,
+    duration: req.body.duration,
+    date: workoutDate
+  }); 
+
+  res.json({
+    username: "not yet defined",
+    description: newWorkout.description,
+    duration: newWorkout.duration,
+    userID: workoutDate.userID,
+    date: workout.date
+  });
   
   /*
   if(err){
