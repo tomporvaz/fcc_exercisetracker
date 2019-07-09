@@ -90,7 +90,7 @@ app.post("/api/exercise/add", function (req, res){
   
   
   
-  newWorkout.save(function(err, savedWorkout){
+  newWorkout.save()/*function(err, savedWorkout){
     if(err){
       //handle error
       console.error(err);
@@ -103,40 +103,63 @@ app.post("/api/exercise/add", function (req, res){
         duration: savedWorkout.duration,
         userID: savedWorkout.userID,
         date: savedWorkout.date
+      });*/
+      .then(savedWorkout => findOneById(savedWorkout._id))   //filter and use callback to respond
+      .populate("User")
+      .exec((err, populatedWorkout){
+        if(err){
+          console.error(err);
+          res.json({"Error": "Error in findOneByID query chain"});
+        } else {
+          res.json({
+            username: populatedWorkout.userID.username,
+            description: populatedWorkout.description,
+            duration: populatedWorkout.duration,
+            userID: populatedWorkout.userID._id,
+            date: populatedWorkout.date
+          });
+        }
+      })
+      .catch(function(err){   //handle errors for promise chain
+        //handle error
+        console.error(err);
+        res.json({Error: "Error adding new excercise."});
       });
-    }
-  });
-  
-})
-
-
-// Not found middleware
-app.use((req, res, next) => {
-  return next({status: 404, message: 'not found'})
-})
-
-// Error Handling middleware
-app.use((err, req, res, next) => {
-  let errCode, errMessage
-  
-  if (err.errors) {
-    // mongoose validation error
-    errCode = 400 // bad request
-    const keys = Object.keys(err.errors)
-    // report the first validation error
-    errMessage = err.errors[keys[0]].message
-  } else {
-    // generic or custom error
-    errCode = err.status || 500
-    errMessage = err.message || 'Internal Server Error'
-  }
-  res.status(errCode).type('txt')
-  .send(errMessage)
-})
-
-const listener = app.listen(process.env.PORT || 3000, () => {
-  console.log('Your app is listening on port ' + listener.address().port)
-})
-
-
-
+      
+      //}
+      //});
+      
+      //})
+      
+      
+      // Not found middleware
+      app.use((req, res, next) => {
+        return next({status: 404, message: 'not found'})
+      })
+      
+      // Error Handling middleware
+      app.use((err, req, res, next) => {
+        let errCode, errMessage
+        
+        if (err.errors) {
+          // mongoose validation error
+          errCode = 400 // bad request
+          const keys = Object.keys(err.errors)
+          // report the first validation error
+          errMessage = err.errors[keys[0]].message
+        } else {
+          // generic or custom error
+          errCode = err.status || 500
+          errMessage = err.message || 'Internal Server Error'
+        }
+        res.status(errCode).type('txt')
+        .send(errMessage)
+      })
+      
+      const listener = app.listen(process.env.PORT || 3000, () => {
+        console.log('Your app is listening on port ' + listener.address().port)
+      })
+      
+      
+      
+      
