@@ -82,7 +82,7 @@ app.post("/api/exercise/add", function (req, res){
   
   //create new Workout with req data, and save Workout to MongoDB
   let newWorkout = new Workout ({
-    userID: req.body.userID,
+    userID: req.body.userId,
     description: req.body.description,
     duration: req.body.duration,
     date: workoutDate
@@ -91,7 +91,7 @@ app.post("/api/exercise/add", function (req, res){
   
   
   newWorkout.save()
-      .then(savedWorkout => findOneById(savedWorkout._id))   //filter and use callback to respond
+      .then(savedWorkout => Workout.findById(savedWorkout._id)   //filter and use callback to respond
       .populate("User")
       .exec(function (err, populatedWorkout){
         if(err){
@@ -99,14 +99,14 @@ app.post("/api/exercise/add", function (req, res){
           res.json({"Error": "Error in findOneByID query chain"});
         } else {
           res.json({
-            username: populatedWorkout.userID.username,
+            username: populatedWorkout.userId.username,
             description: populatedWorkout.description,
             duration: populatedWorkout.duration,
-            userID: populatedWorkout.userID._id,
+            userID: populatedWorkout.userId._id,
             date: populatedWorkout.date
           });
         }
-      })
+      }))
       .catch(function(err){   //handle errors for promise chain
         //handle error
         console.error(err);
