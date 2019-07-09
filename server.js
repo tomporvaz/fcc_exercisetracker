@@ -90,23 +90,10 @@ app.post("/api/exercise/add", function (req, res){
   
   
   
-  newWorkout.save()/*function(err, savedWorkout){
-    if(err){
-      //handle error
-      console.error(err);
-      res.json({Error: "Error adding new excercise."});
-    } else {
-      //return User object with excercise fields 
-      res.json({
-        username: "not yet defined",
-        description: savedWorkout.description,
-        duration: savedWorkout.duration,
-        userID: savedWorkout.userID,
-        date: savedWorkout.date
-      });*/
+  newWorkout.save()
       .then(savedWorkout => findOneById(savedWorkout._id))   //filter and use callback to respond
       .populate("User")
-      .exec((err, populatedWorkout){
+      .exec(function (err, populatedWorkout){
         if(err){
           console.error(err);
           res.json({"Error": "Error in findOneByID query chain"});
@@ -125,11 +112,9 @@ app.post("/api/exercise/add", function (req, res){
         console.error(err);
         res.json({Error: "Error adding new excercise."});
       });
+
       
-      //}
-      //});
-      
-      //})
+      })
       
       
       // Not found middleware
