@@ -99,10 +99,10 @@ app.post("/api/exercise/add", function (req, res){
           res.json({"Error": "Error in findOneByID query chain"});
         } else {
           res.json({
-            username: populatedWorkout.userId.username,
+            username: populatedWorkout.userID.username,
             description: populatedWorkout.description,
             duration: populatedWorkout.duration,
-            userID: populatedWorkout.userId._id,
+            userID: populatedWorkout.userID._id,
             date: populatedWorkout.date
           });
         }
