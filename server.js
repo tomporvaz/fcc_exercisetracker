@@ -65,7 +65,7 @@ app.post("/api/exercise/new-user", function (req, res) {
 This route here wiil save excercise workout info
 */
 const workoutSchema = new Schema({
-  userID: {type: mongoose.ObjectId, ref: User},
+  userID: {type: String, ref: User},
   description: {type: String, required: true},
   duration: {type: Number, required: true},
   date: {type: String}
