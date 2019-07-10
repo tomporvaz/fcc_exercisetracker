@@ -92,8 +92,8 @@ app.post("/api/exercise/add", function (req, res){
   
   newWorkout.save()
       .then(savedWorkout => Workout.findById(savedWorkout._id)   //filter and use callback to respond
-      .populate("User")
-      .exec(function (err, populatedWorkout){
+      .populate("userID")
+      .exec((err, populatedWorkout) => {
         if(err){
           console.error(err);
           res.json({"Error": "Error in findOneByID query chain"});
