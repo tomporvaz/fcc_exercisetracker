@@ -82,69 +82,82 @@ app.post("/api/exercise/add", function (req, res){
   
   //create new Workout with req data, and save Workout to MongoDB
   let newWorkout = new Workout ({
-    userID: req.body.userId,
+    userID: "",
     description: req.body.description,
     duration: req.body.duration,
     date: workoutDate
   }); 
   
-  
-  
-  newWorkout.save()
-      .then(savedWorkout => Workout.findById(savedWorkout._id)   //filter and use callback to respond
-      .populate("userID")
-      .exec((err, populatedWorkout) => {
-        if(err){
-          console.error(err);
-          res.json({"Error": "Error in findOneByID query chain"});
+  //check if user exists in user collection before assigning to newWorkout
+  User.findById(req.body.userID,
+    function(err, user){
+      if(err){
+        if(!user){
+          res.send("User with id " + req.body.userID + " does not exist!");
         } else {
-          res.json({
-            username: populatedWorkout.userID.username,
-            description: populatedWorkout.description,
-            duration: populatedWorkout.duration,
-            userID: populatedWorkout.userID._id,
-            date: populatedWorkout.date
-          });
+          console.error{err};
+          res.send{"Error on username: " + err};
         }
-      }))
-      .catch(function(err){   //handle errors for promise chain
-        //handle error
+      } else {
+        newWorkout.userID = req.body.userID;
+      }
+    });
+    
+    newWorkout.save()
+    .then(savedWorkout => Workout.findById(savedWorkout._id)   //filter and use callback to respond
+    .populate("userID")
+    .exec((err, populatedWorkout) => {
+      if(err){
         console.error(err);
-        res.json({Error: "Error adding new excercise."});
-      });
-
-      
-      })
-      
-      
-      // Not found middleware
-      app.use((req, res, next) => {
-        return next({status: 404, message: 'not found'})
-      })
-      
-      // Error Handling middleware
-      app.use((err, req, res, next) => {
-        let errCode, errMessage
-        
-        if (err.errors) {
-          // mongoose validation error
-          errCode = 400 // bad request
-          const keys = Object.keys(err.errors)
-          // report the first validation error
-          errMessage = err.errors[keys[0]].message
-        } else {
-          // generic or custom error
-          errCode = err.status || 500
-          errMessage = err.message || 'Internal Server Error'
-        }
-        res.status(errCode).type('txt')
-        .send(errMessage)
-      })
-      
-      const listener = app.listen(process.env.PORT || 3000, () => {
-        console.log('Your app is listening on port ' + listener.address().port)
-      })
-      
-      
-      
-      
+        res.json({"Error": "Error in findOneByID query chain"});
+      } else {
+        res.json({
+          username: populatedWorkout.userID.username,
+          description: populatedWorkout.description,
+          duration: populatedWorkout.duration,
+          userID: populatedWorkout.userID._id,
+          date: populatedWorkout.date
+        });
+      }
+    }))
+    .catch(function(err){   //handle errors for promise chain
+      //handle error
+      console.error(err);
+      res.json({Error: "Error adding new excercise."});
+    });
+    
+    
+  })
+  
+  
+  // Not found middleware
+  app.use((req, res, next) => {
+    return next({status: 404, message: 'not found'})
+  })
+  
+  // Error Handling middleware
+  app.use((err, req, res, next) => {
+    let errCode, errMessage
+    
+    if (err.errors) {
+      // mongoose validation error
+      errCode = 400 // bad request
+      const keys = Object.keys(err.errors)
+      // report the first validation error
+      errMessage = err.errors[keys[0]].message
+    } else {
+      // generic or custom error
+      errCode = err.status || 500
+      errMessage = err.message || 'Internal Server Error'
+    }
+    res.status(errCode).type('txt')
+    .send(errMessage)
+  })
+  
+  const listener = app.listen(process.env.PORT || 3000, () => {
+    console.log('Your app is listening on port ' + listener.address().port)
+  })
+  
+  
+  
+  
