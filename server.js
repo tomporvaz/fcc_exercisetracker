@@ -99,7 +99,7 @@ app.post("/api/exercise/add", function (req, res){
           return res.send("Error on username: " + err);
         }
       } else {
-        newWorkout.userID = req.body.userID;
+        newWorkout.userID = req.body.userId;
         newWorkout.save()
         .then(savedWorkout => Workout.findById(savedWorkout._id)   //filter and use callback to respond
         .populate("userID")
