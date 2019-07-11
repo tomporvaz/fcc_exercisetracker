@@ -89,44 +89,41 @@ app.post("/api/exercise/add", function (req, res){
   }); 
   
   //check if user exists in user collection before assigning to newWorkout
-  User.findById(req.body.userID,
+  User.findById(req.body.userId,
     function(err, user){
-      if(err){
+     
         if(!user){
-          res.send("User with id " + req.body.userID + " does not exist!");
-        } else {
-          console.error{err};
-          res.send{"Error on username: " + err};
+          return res.send("User with id " + req.body.userId + " does not exist!");
+        } else  if(err){{
+          console.error(err);
+          return res.send("Error on username: " + err);
         }
       } else {
         newWorkout.userID = req.body.userID;
-      }
-    });
-    
-    newWorkout.save()
-    .then(savedWorkout => Workout.findById(savedWorkout._id)   //filter and use callback to respond
-    .populate("userID")
-    .exec((err, populatedWorkout) => {
-      if(err){
-        console.error(err);
-        res.json({"Error": "Error in findOneByID query chain"});
-      } else {
-        res.json({
-          username: populatedWorkout.userID.username,
-          description: populatedWorkout.description,
-          duration: populatedWorkout.duration,
-          userID: populatedWorkout.userID._id,
-          date: populatedWorkout.date
+        newWorkout.save()
+        .then(savedWorkout => Workout.findById(savedWorkout._id)   //filter and use callback to respond
+        .populate("userID")
+        .exec((err, populatedWorkout) => {
+          if(err){
+            console.error(err);
+            res.json({"Error": "Error in findOneByID query chain"});
+          } else {
+            res.json({
+              username: populatedWorkout.userID.username,
+              description: populatedWorkout.description,
+              duration: populatedWorkout.duration,
+              userID: populatedWorkout.userID._id,
+              date: populatedWorkout.date
+            });
+          }
+        }))
+        .catch(function(err){   //handle errors for promise chain
+          //handle error
+          console.error(err);
+          res.json({Error: "Error adding new excercise."});
         });
       }
-    }))
-    .catch(function(err){   //handle errors for promise chain
-      //handle error
-      console.error(err);
-      res.json({Error: "Error adding new excercise."});
-    });
-    
-    
+    });    
   })
   
   
