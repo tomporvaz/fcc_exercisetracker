@@ -60,6 +60,25 @@ app.post("/api/exercise/new-user", function (req, res) {
   })
 });
 
+/*
+Route to return array of users
+*/
+app.get("/api/exercise/users", function(req, res){
+  if(err){
+    console.error(err);
+    return res.json({"error": "Failed to get array of users"});
+  } else {
+    User.find({}, function(err, userArray){
+      if(err){
+        console.error(err);
+        return res.json({"error": "Could not find users"})
+      } else {
+        return res.json(userArray);
+      }
+    })
+  }
+})
+
 
 /*
 This route here wiil save excercise workout info
@@ -89,9 +108,9 @@ app.post("/api/exercise/add", function (req, res){
   }); 
   
   //check if user exists in user collection before assigning to newWorkout
+  //I believe this query could be avoided with pre("save") hook
   User.findById(req.body.userId,
     function(err, user){
-     
         if(!user){
           return res.send("User with id " + req.body.userId + " does not exist!");
         } else  if(err){{
