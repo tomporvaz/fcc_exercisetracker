@@ -149,7 +149,7 @@ app.get("/api/exercise/log", function(req, res){
       console.error(err);
       return res.json({"error": "Could not find users"})
     } else {
-      Workout.find({userId: user._id}, function(err, workouts){
+      Workout.find({userID: user._id}, function(err, workouts){
         return res.json(user, workouts);
       })
       //return res.json(user);
