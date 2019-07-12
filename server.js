@@ -64,14 +64,14 @@ app.post("/api/exercise/new-user", function (req, res) {
 Route to return array of users
 */
 app.get("/api/exercise/users", function(req, res){
-    User.find({}, function(err, userArray){
-      if(err){
-        console.error(err);
-        return res.json({"error": "Could not find users"})
-      } else {
-        return res.json(userArray);
-      }
-    })
+  User.find({}, function(err, userArray){
+    if(err){
+      console.error(err);
+      return res.json({"error": "Could not find users"})
+    } else {
+      return res.json(userArray);
+    }
+  })
 })
 
 
@@ -106,39 +106,39 @@ app.post("/api/exercise/add", function (req, res){
   //I believe this query could be avoided with pre("save") hook
   User.findById(req.body.userId,
     function(err, user){
-        if(!user){
-          return res.send("User with id " + req.body.userId + " does not exist!");
-        } else  if(err){{
-          console.error(err);
-          return res.send("Error on username: " + err);
-        }
-      } else {
-        newWorkout.userID = req.body.userId;
-        newWorkout.save()
-        .then(savedWorkout => Workout.findById(savedWorkout._id)   //filter and use callback to respond
-        .populate("userID")
-        .exec((err, populatedWorkout) => {
-          if(err){
-            console.error(err);
-            res.json({"Error": "Error in findOneByID query chain"});
-          } else {
-            res.json({
-              username: populatedWorkout.userID.username,
-              description: populatedWorkout.description,
-              duration: populatedWorkout.duration,
-              userID: populatedWorkout.userID._id,
-              date: populatedWorkout.date
-            });
-          }
-        }))
-        .catch(function(err){   //handle errors for promise chain
-          //handle error
-          console.error(err);
-          res.json({Error: "Error adding new excercise."});
-        });
+      if(!user){
+        return res.send("User with id " + req.body.userId + " does not exist!");
+      } else  if(err){{
+        console.error(err);
+        return res.send("Error on username: " + err);
       }
-    });    
-  })
+    } else {
+      newWorkout.userID = req.body.userId;
+      newWorkout.save()
+      .then(savedWorkout => Workout.findById(savedWorkout._id)   //filter and use callback to respond
+      .populate("userID")
+      .exec((err, populatedWorkout) => {
+        if(err){
+          console.error(err);
+          res.json({"Error": "Error in findOneByID query chain"});
+        } else {
+          res.json({
+            username: populatedWorkout.userID.username,
+            description: populatedWorkout.description,
+            duration: populatedWorkout.duration,
+            userID: populatedWorkout.userID._id,
+            date: populatedWorkout.date
+          });
+        }
+      }))
+      .catch(function(err){   //handle errors for promise chain
+        //handle error
+        console.error(err);
+        res.json({Error: "Error adding new excercise."});
+      });
+    }
+  });    
+})
 
 /*
 Route to return user workout log
@@ -150,42 +150,45 @@ app.get("/api/exercise/log", function(req, res){
       return res.json({"error": "Could not find users"})
     } else {
       Workout.find({userID: user._id}, function(err, workouts){
-        return res.json(user, workouts);
+        let workoutLogObject = {
+          userObj: user,
+          count: workouts.length,
+          log: workouts
+        }
+        return res.json(workoutLogObject);
       })
-      //return res.json(user);
     }
   })
 })
+
+
+// Not found middleware
+app.use((req, res, next) => {
+  return next({status: 404, message: 'not found'})
+})
+
+// Error Handling middleware
+app.use((err, req, res, next) => {
+  let errCode, errMessage
   
-  
-  // Not found middleware
-  app.use((req, res, next) => {
-    return next({status: 404, message: 'not found'})
-  })
-  
-  // Error Handling middleware
-  app.use((err, req, res, next) => {
-    let errCode, errMessage
-    
-    if (err.errors) {
-      // mongoose validation error
-      errCode = 400 // bad request
-      const keys = Object.keys(err.errors)
-      // report the first validation error
-      errMessage = err.errors[keys[0]].message
-    } else {
-      // generic or custom error
-      errCode = err.status || 500
-      errMessage = err.message || 'Internal Server Error'
-    }
-    res.status(errCode).type('txt')
-    .send(errMessage)
-  })
-  
-  const listener = app.listen(process.env.PORT || 3000, () => {
-    console.log('Your app is listening on port ' + listener.address().port)
-  })
-  
-  
-  
-  
+  if (err.errors) {
+    // mongoose validation error
+    errCode = 400 // bad request
+    const keys = Object.keys(err.errors)
+    // report the first validation error
+    errMessage = err.errors[keys[0]].message
+  } else {
+    // generic or custom error
+    errCode = err.status || 500
+    errMessage = err.message || 'Internal Server Error'
+  }
+  res.status(errCode).type('txt')
+  .send(errMessage)
+})
+
+const listener = app.listen(process.env.PORT || 3000, () => {
+  console.log('Your app is listening on port ' + listener.address().port)
+})
+
+
+
