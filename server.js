@@ -149,7 +149,9 @@ app.get("/api/exercise/log", function(req, res){
       console.error(err);
       return res.json({"error": "Could not find users"})
     } else {
-      Workout.find({userID: user._id}, function(err, workouts){
+      Workout.find({userID: user._id})
+      .limit(req.query.limit)
+      .exec(function(err, workouts){
         let workoutLogObject = {
           userObj: user,
           count: workouts.length,
