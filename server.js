@@ -64,10 +64,6 @@ app.post("/api/exercise/new-user", function (req, res) {
 Route to return array of users
 */
 app.get("/api/exercise/users", function(req, res){
-  if(err){
-    console.error(err);
-    return res.json({"error": "Failed to get array of users"});
-  } else {
     User.find({}, function(err, userArray){
       if(err){
         console.error(err);
@@ -76,7 +72,6 @@ app.get("/api/exercise/users", function(req, res){
         return res.json(userArray);
       }
     })
-  }
 })
 
 
@@ -144,6 +139,20 @@ app.post("/api/exercise/add", function (req, res){
       }
     });    
   })
+
+/*
+Route to return user workout log
+*/
+app.get("/api/exercise/log", function(req, res){
+  User.findById(req.query.userId, function(err, user){
+    if(err){
+      console.error(err);
+      return res.json({"error": "Could not find users"})
+    } else {
+      return res.json(user);
+    }
+  })
+})
   
   
   // Not found middleware
