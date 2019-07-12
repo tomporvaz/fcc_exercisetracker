@@ -152,7 +152,7 @@ app.get("/api/exercise/log", function(req, res){
       Workout.find({userID: user._id})
       .limit(req.query.limit)  //limit needs to be cast to a string
       .exec(function(err, workouts){
-        console.error(err);
+        console.error(err); //one little change to test commit
         console.log(req.query);
         let workoutLogObject = {
           userObj: user,
