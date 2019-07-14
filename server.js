@@ -150,7 +150,7 @@ app.get("/api/exercise/log", function(req, res){
       return res.json({"error": "Could not find users"})
     } else {
       Workout.find({userID: user._id})
-      .limit(req.query.limit)  //limit needs to be cast to a string
+      .limit(Number(req.query.limit))  //limit needs to be cast to a string.  Thx Flaviocopes
       .exec(function(err, workouts){
         console.error(err); //one little change to test commit
         console.log(req.query);
