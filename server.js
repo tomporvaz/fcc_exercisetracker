@@ -144,8 +144,8 @@ app.post("/api/exercise/add", function (req, res){
 Route to return user workout log
 */
 app.get("/api/exercise/log", function(req, res){
-  const fromDate = new Date(req.query.from);
-  const toDate = new Date(req.query.to);
+  const fromDate = req.query.from ? new Date(req.query.from) : new Date(0);
+  const toDate = req.query.to ? new Date(req.query.to) : new Date();
   console.log("dates: " + fromDate + ", " + toDate);
 
   User.findById(req.query.userId, function(err, user){
