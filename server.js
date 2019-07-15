@@ -144,12 +144,18 @@ app.post("/api/exercise/add", function (req, res){
 Route to return user workout log
 */
 app.get("/api/exercise/log", function(req, res){
+  const fromDate = Date(req.query.from);
+  const toDate = Date(req.query.to);
+
   User.findById(req.query.userId, function(err, user){
     if(err){
       console.error(err);
       return res.json({"error": "Could not find users"})
     } else {
-      Workout.find({userID: user._id})
+      Workout.find({
+        userID: user._id,
+        date: {$gte: fromDate, $lte: toDate}
+      })
       .limit(Number(req.query.limit))  //limit needs to be cast to a string.  Thx Flaviocopes
       .exec(function(err, workouts){
         console.error(err); //one little change to test commit
