@@ -82,7 +82,7 @@ const workoutSchema = new Schema({
   userID: {type: String, ref: User},
   description: {type: String, required: true},
   duration: {type: Number, required: true},
-  date: {type: String}
+  date: {type: Date}
 })
 
 let Workout = mongoose.model("Workout", workoutSchema);
@@ -144,8 +144,9 @@ app.post("/api/exercise/add", function (req, res){
 Route to return user workout log
 */
 app.get("/api/exercise/log", function(req, res){
-  const fromDate = Date(req.query.from);
-  const toDate = Date(req.query.to);
+  const fromDate = new Date(req.query.from);
+  const toDate = new Date(req.query.to);
+  console.log("dates: " + fromDate + ", " + toDate);
 
   User.findById(req.query.userId, function(err, user){
     if(err){
